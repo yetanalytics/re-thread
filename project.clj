@@ -1,6 +1,6 @@
-(defproject re-thread "0.1.0-SNAPSHOT"
+(defproject com.yetanalytics/re-thread "0.1.0-SNAPSHOT"
   :description "Communicate with re-frame in a Web Worker"
-  :url "http://example.com/FIXME"
+  :url "https://github.com/yetanalytics/re-thread"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.9.0-alpha14"]
