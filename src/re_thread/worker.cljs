@@ -63,11 +63,15 @@
       :subscribe (add-sub-track! data)
       :unsubscribe (dispose-sub-track! data))))
 
+(defonce listener
+  (delay
+   (.addEventListener js/self "message" client-> false)
+   (->client [:ready []])))
+
 ;; API
 
 (defn listen!
   "Attaches a listener to get events from the client, then lets the client know
   it's ready."
   []
-  (.addEventListener js/self "message" client-> false)
-  (->client [:ready []]))
+  @listener)
