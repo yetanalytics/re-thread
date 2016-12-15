@@ -59,6 +59,10 @@ Then, in your components, you can pretty much forget that things are happening i
 
 ```
 
+## Example App
+
+I set up the re-frame todomvc example in a webworker, try it out in the `examples` directory!
+
 ## Gotchas
 
 * Since all of the app state is contained in the worker process, you should take care not to write view code that fails if a subscription returns nil. Using the optional second arg of `subscribe` can help with that.
@@ -68,7 +72,6 @@ Then, in your components, you can pretty much forget that things are happening i
 ## TODO:
 
 * Docs
-* Example App - Waiting on the next release of Figwheel (with worker support!) to release this.
 * Batching/caching worker -> client subscription results
 
 
