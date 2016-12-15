@@ -18,22 +18,23 @@ In your Web Worker re-frame app:
 
 Your client/host application will consist of only views and handler calls, delegating everything else to the worker.
 
-To initialize the worker, use `re-thread.client/init!`:
+To initialize the worker, use `re-thread.client/init`:
 
 ``` clojure
 (ns your-client-app.core
   (:require
-   [re-thread.client :refer [init!]]
+   [re-thread.client :refer [init]]
    ...))
 
 
-;; Remember, in reloadable environments, you only want to run init! once.
+;; Remember, in reloadable environments, you only want to run init once.
 (defonce init-worker
   (delay
    ...
-   (init! "/js/compiled_worker.js")))
+   (init "/js/compiled_worker.js" render) ;; optional callback
+   ))
 
-@bootstrap
+@init-worker
 
 ```
 
@@ -60,7 +61,16 @@ Then, in your components, you can pretty much forget that things are happening i
 
 ## Gotchas
 
-Since all of the app state is contained in the worker process, you should take care not to write view code that fails if a subscription returns nil. Using the optional second arg of `subscribe` can help with that.
+* Since all of the app state is contained in the worker process, you should take care not to write view code that fails if a subscription returns nil. Using the optional second arg of `subscribe` can help with that.
+* Though you get all of re-frame's subscription caching + other goodness in the worker, remember that each novel subscription result has to be serialized and sent back from the worker (once per sub id, client subscriptions are also deduplicated). Large results may hurt performance.
+* Doesn't seem to work without advanced compilation on Safari 10, fine in Chrome/Firefox. The initial subscription messages to the worker are lost with no error. Minified builds work fine though.
+
+## TODO:
+
+* Docs
+* Example App - Waiting on the next release of Figwheel (with worker support!) to release this.
+* Batching/caching worker -> client subscription results
+
 
 ## License
 
