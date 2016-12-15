@@ -7,7 +7,7 @@
 (defn ->client
   "Send an event to the client."
   [event]
-  (.postMessage js/self (clj->js [(encode-data event)])))
+  (.postMessage js/self (encode-data event)))
 
 ;; Holds reagent tracks of re-frame subs
 (defonce tracks
@@ -57,16 +57,11 @@
 (defn client->
   "Decode and dispatch client events"
   [msg]
-  (let [[kind data] (decode-data (first (.-data msg)))]
+  (let [[kind data] (decode-data (.-data msg))]
     (case kind
       :dispatch (re-frame/dispatch data)
       :subscribe (add-sub-track! data)
       :unsubscribe (dispose-sub-track! data))))
-
-(defonce listener
-  (delay
-   (.addEventListener js/self "message" client-> false)
-   (->client [:ready []])))
 
 ;; API
 
@@ -74,4 +69,5 @@
   "Attaches a listener to get events from the client, then lets the client know
   it's ready."
   []
-  @listener)
+  (.addEventListener js/self "message" client-> false)
+  true)
