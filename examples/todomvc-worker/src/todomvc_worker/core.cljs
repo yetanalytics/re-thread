@@ -18,6 +18,8 @@
 (defonce worker
   (delay (init "/js/bootstrap_worker.js")))
 
+@worker
+
 ;; -- Routes and History ------------------------------------------------------
 
 (defroute "/" [] (dispatch [:set-showing :all]))
@@ -34,6 +36,5 @@
 
 (defn ^:export main
   []
-  @worker
   (reagent/render [todomvc-worker.views/todo-app]
                   (.getElementById js/document "app")))

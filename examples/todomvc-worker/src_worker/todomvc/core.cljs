@@ -16,7 +16,7 @@
 ;; Initialize and run the listener
 (defonce init
   (delay
-   (print "initializing ")
+   (print "initializing Worker...")
    (dispatch-sync [:initialise-db])
    (listen!)))
 
