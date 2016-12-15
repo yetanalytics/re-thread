@@ -6,5 +6,5 @@
   :dependencies [[org.clojure/clojure "1.9.0-alpha14"]
                  [org.clojure/clojurescript "1.9.293"]
                  [reagent "0.6.0"]
-                 [re-frame "0.9.0-beta1"]
+                 [re-frame "0.9.0"]
                  [com.cognitect/transit-cljs "0.8.239"]])
