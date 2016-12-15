@@ -2,6 +2,14 @@
 
 A tiny Clojurescript library for interacting with re-frame when it's running in a Web Worker.
 
+## Why
+
+re-frame is great for heavy lifting in the browser, but sharing a single thread with the UI can still be problematic. By shoving re-frame's state and events (and any other event/comms stuff like websockets) into a worker thread, we can keep the main browser thread nice and responsive.
+
+## How
+
+re-thread abstracts re-frame's subscription process over the Web Workers API messaging system. View components in the main thread "subscribe" to re-frame subscriptions defined in the worker, where reagent's `track!` function is used to watch them and transmit updates back. Disposals of subscriptions in the main thread are monitored, resulting in disposal of the corresponding tracks in the worker thread.
+
 ## Usage
 
 In your Web Worker re-frame app:
@@ -68,11 +76,14 @@ I set up the re-frame todomvc example in a webworker, try it out in the `example
 * Since all of the app state is contained in the worker process, you should take care not to write view code that fails if a subscription returns nil. Using the optional second arg of `subscribe` can help with that.
 * Though you get all of re-frame's subscription caching + other goodness in the worker, remember that each novel subscription result has to be serialized and sent back from the worker (once per sub id, client subscriptions are also deduplicated). Large results may hurt performance.
 * Doesn't seem to work without advanced compilation on Safari 10, fine in Chrome/Firefox. The initial subscription messages to the worker are lost with no error. Minified builds work fine though.
+* Arguments to `subscribe` are not supported. You probably shouldn't have these anyway.
 
 ## TODO:
 
 * Docs
 * Batching/caching worker -> client subscription results
+* Multiple Workers
+* Extensible Messaging
 
 
 ## License
