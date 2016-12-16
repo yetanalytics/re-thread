@@ -13,49 +13,55 @@
 (defonce tracks
   (atom {}))
 
+(defn- register-track
+  [?t uid qv]
+  (if ?t
+    (update ?t :client-subs conj uid)
+    (let [new-sub (re-frame/subscribe qv)]
+      {:tracker (r/track!
+                 (fn []
+                   (->client [:update qv @new-sub]))
+                 [])
+       :client-subs #{uid}})))
+
 (defn add-sub-track!
-  "Given a tuple of unique ID and re-frame subscription ID,
+  "Given a tuple of unique ID and re-frame subscription query vector,
    Make a new track or add this id to the set of client subs."
-  [[unique-id sub-id]]
-  (swap! tracks update sub-id
-         (fn [?t uid sid]
-           (if ?t
-             (update ?t :client-subs conj uid)
-             (let [new-sub (re-frame/subscribe [sid])]
-               {:tracker (r/track!
-                          (fn []
-                            (->client [:update sid @new-sub]))
-                          [])
-                :client-subs #{uid}})))
+  [[unique-id query-v]]
+  (swap! tracks update query-v
+         register-track
          unique-id
-         sub-id))
+         query-v))
+
+(defn- unregister-track
+  [tmap uid qv]
+  (if-let [t (get tmap qv)]
+    (let [{:keys [tracker
+                  client-subs]} t
+          client-subs-after (disj client-subs uid)]
+      (if (< 0 (count client-subs-after))
+        (assoc tmap qv {:tracker tracker
+                        :client-subs
+                        client-subs-after})
+        (do
+          ;; stop sending updates
+          (r/dispose! tracker)
+          ;; remove from client cache
+          (->client [:remove qv])
+          (dissoc tmap qv))))
+    tmap))
 
 (defn dispose-sub-track!
-  "Given a tuple of unique ID and re-frame subscription ID,
-  remove the unique ID from the "
-  [[unique-id sub-id]]
+  "Given a tuple of unique ID and re-frame subscription query vector,
+  remove the uid, and remove the tracker if no other uids are left."
+  [[unique-id query-v]]
   (swap! tracks
-         (fn [tmap uid sid]
-           (if-let [t (get tmap sid)]
-             (let [{:keys [tracker
-                           client-subs]} t
-                   client-subs-after (disj client-subs uid)]
-               (if (< 0 (count client-subs-after))
-                 (assoc tmap sid {:tracker tracker
-                                  :client-subs
-                                  client-subs-after})
-                 (do
-                   ;; stop sending updates
-                   (r/dispose! tracker)
-                   ;; remove from client cache
-                   (->client [:remove sid])
-                   (dissoc tmap sid))))
-             tmap))
+         unregister-track
          unique-id
-         sub-id))
+         query-v))
 
 (defn client->
-  "Decode and dispatch client events"
+  "Decode and dispatch client events."
   [msg]
   (let [[kind data] (decode-data (.-data msg))]
     (case kind
