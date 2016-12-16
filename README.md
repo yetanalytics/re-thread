@@ -1,5 +1,7 @@
 # re-thread
 
+[![Clojars Project](https://img.shields.io/clojars/v/com.yetanalytics/re-thread.svg)](https://clojars.org/com.yetanalytics/re-thread)
+
 A tiny Clojurescript library for interacting with re-frame when it's running in a Web Worker.
 
 ## Why
