@@ -17,12 +17,12 @@
 (defn worker->
   "Handle Messages from the worker"
   [msg]
-  (let [[action sub-id v :as event-vec] (decode-data (.-data msg))]
+  (let [[action query-v v :as event-vec] (decode-data (.-data msg))]
     (case action
       ;; Update data for a sub
-      :update (swap! sub-cache assoc sub-id v)
+      :update (swap! sub-cache assoc query-v v)
       ;; Remove subs from the cache when not needed
-      :remove (swap! sub-cache dissoc sub-id)
+      :remove (swap! sub-cache dissoc query-v)
 
       (.warn js/console (str "unhandled message: " event-vec)))))
 
@@ -58,19 +58,19 @@
   "Like re-frame.core/subscribe, returns a reaction that will recieve
    the computed value of the sub, with updates. Unlike re-frame, a second
    arg can be provided with a default value to prevent nils/thrashing"
-  [[sub-id] & [?default]]
+  [query-v & [?default]]
   (let [uid (random-uuid)] ;; Unique id for this subscription
 
     ;; Request the sub
-    (->worker [:subscribe [uid sub-id]])
+    (->worker [:subscribe [uid query-v]])
 
     ;; Return the reaction
     (ra/make-reaction
      (fn []
-       (get @sub-cache sub-id ?default))
+       (get @sub-cache query-v ?default))
 
      :on-dispose
      (fn [_]
        ;; We let the worker know we're unsubscribing, it will handle
        ;; clearing the cache if needed.
-       (->worker [:unsubscribe [uid sub-id]])))))
+       (->worker [:unsubscribe [uid query-v]])))))
