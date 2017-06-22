@@ -30,6 +30,6 @@ get live reloading, nor a REPL.
 
 ## License
 
-Copyright © 2016 YET Analytics INC
+Copyright © 2017 YET Analytics INC
 
 Distributed under the Eclipse Public License either version 1.0 or (at your option) any later version.

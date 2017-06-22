@@ -89,7 +89,7 @@ I set up the re-frame todomvc example in a webworker, try it out in the `example
 
 ## License
 
-Copyright © 2016 Yet Analytics Inc.
+Copyright © 2017 Yet Analytics Inc.
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.
