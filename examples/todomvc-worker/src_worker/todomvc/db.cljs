@@ -1,6 +1,6 @@
 (ns todomvc.db
   (:require [cljs.reader]
-            [cljs.spec :as s]
+            [clojure.spec.alpha :as s]
             [re-frame.core :as re-frame]))
 
 

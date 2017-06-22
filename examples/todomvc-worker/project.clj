@@ -6,17 +6,17 @@
 
   :min-lein-version "2.7.1"
 
-  :dependencies [[org.clojure/clojure "1.9.0-alpha14"]
-                 [org.clojure/clojurescript "1.9.293"]
-                 [org.clojure/core.async "0.2.395"
+  :dependencies [[org.clojure/clojure "1.9.0-alpha17"]
+                 [org.clojure/clojurescript "1.9.562"]
+                 [org.clojure/core.async "0.3.443"
                   :exclusions [org.clojure/tools.reader]]
-                 [reagent "0.6.0"]
-                 [re-frame "0.9.0"]
-                 [binaryage/devtools "0.8.1"]
+                 [reagent "0.6.2"]
+                 [re-frame "0.9.4"]
+                 [binaryage/devtools "0.9.4"]
                  [secretary "1.2.3"]
-                 [com.yetanalytics/re-thread "0.1.0-SNAPSHOT"]]
+                 [com.yetanalytics/re-thread "0.1.1-SNAPSHOT"]]
 
-  :plugins [[com.yetanalytics/lein-figwheel "0.5.9-SNAPSHOT"]
+  :plugins [[lein-figwheel "0.5.10"]
             [lein-cljsbuild "1.1.4" :exclusions [[org.clojure/clojure]]]]
 
   :source-paths ["src" "src_worker"]
@@ -124,9 +124,9 @@
   ;; https://github.com/bhauman/lein-figwheel/wiki/Using-the-Figwheel-REPL-within-NRepl
 
 
-  :profiles {:dev {:dependencies [[binaryage/devtools "0.8.2"]
-                                  [com.yetanalytics/figwheel-sidecar "0.5.9-SNAPSHOT"]
-                                  [com.cemerick/piggieback "0.2.1"]]
+  :profiles {:dev {:dependencies [[binaryage/devtools "0.9.4"]
+                                  [figwheel-sidecar "0.5.10"]
+                                  [com.cemerick/piggieback "0.2.2"]]
                    ;; need to add dev source path here to get user.clj loaded
                    :source-paths ["src" "dev"]
                    ;; for CIDER
