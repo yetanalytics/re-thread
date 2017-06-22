@@ -14,7 +14,7 @@
                  [re-frame "0.9.4"]
                  [binaryage/devtools "0.9.4"]
                  [secretary "1.2.3"]
-                 [com.yetanalytics/re-thread "0.1.1-SNAPSHOT"]]
+                 [com.yetanalytics/re-thread "0.1.1"]]
 
   :plugins [[lein-figwheel "0.5.10"]
             [lein-cljsbuild "1.1.4" :exclusions [[org.clojure/clojure]]]]
