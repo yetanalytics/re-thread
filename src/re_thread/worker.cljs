@@ -27,11 +27,18 @@
 (defn add-sub-track!
   "Given a tuple of unique ID and re-frame subscription query vector,
    Make a new track or add this id to the set of client subs."
-  [[unique-id query-v]]
-  (swap! tracks update query-v
-         register-track
-         unique-id
-         query-v))
+  [db [_[unique-id query-v]]]
+  (update db ::tracks
+          (fnil update {})
+          query-v
+          register-track
+          unique-id
+          query-v))
+
+;; Register re-frame handler
+(re-frame/reg-event-db
+ ::add-sub-track!
+ add-sub-track!)
 
 (defn- unregister-track
   [tmap uid qv]
@@ -54,11 +61,15 @@
 (defn dispose-sub-track!
   "Given a tuple of unique ID and re-frame subscription query vector,
   remove the uid, and remove the tracker if no other uids are left."
-  [[unique-id query-v]]
-  (swap! tracks
-         unregister-track
-         unique-id
-         query-v))
+  [db [_ [unique-id query-v]]]
+  (update db ::tracks
+          unregister-track
+          unique-id
+          query-v))
+
+(re-frame/reg-event-db
+ ::dispose-sub-track!
+ dispose-sub-track!)
 
 (defn client->
   "Decode and dispatch client events."
@@ -66,8 +77,9 @@
   (let [[kind data] (decode-data (.-data msg))]
     (case kind
       :dispatch (re-frame/dispatch data)
-      :subscribe (add-sub-track! data)
-      :unsubscribe (dispose-sub-track! data))))
+      :subscribe (re-frame/dispatch [::add-sub-track! data])
+      :unsubscribe (re-frame/dispatch [::dispose-sub-track! data])
+      )))
 
 ;; API
 
