@@ -14,17 +14,25 @@
 (defonce worker
   (atom nil))
 
+(defmulti worker->* (fn [[action & _]]
+                      action))
+
+(defmethod worker->* :update
+  [[action query-v v :as event-vec]]
+  (swap! sub-cache assoc query-v v))
+
+(defmethod worker->* :remove
+  [[action query-v :as event-vec]]
+  (swap! sub-cache dissoc query-v))
+
+(defmethod worker->* :default
+  [event-vec]
+  (.warn js/console (str "unhandled message: " event-vec)))
+
 (defn worker->
   "Handle Messages from the worker"
   [msg]
-  (let [[action query-v v :as event-vec] (decode-data (.-data msg))]
-    (case action
-      ;; Update data for a sub
-      :update (swap! sub-cache assoc query-v v)
-      ;; Remove subs from the cache when not needed
-      :remove (swap! sub-cache dissoc query-v)
-
-      (.warn js/console (str "unhandled message: " event-vec)))))
+  (worker->* (decode-data (.-data msg))))
 
 (defn new-worker
   "Instantiate a new worker with a listener"
