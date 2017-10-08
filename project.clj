@@ -1,4 +1,4 @@
-(defproject com.yetanalytics/re-thread "0.1.2"
+(defproject com.yetanalytics/re-thread "0.1.3-SNAPSHOT"
   :description "Communicate with re-frame in a Web Worker"
   :url "https://github.com/yetanalytics/re-thread"
   :license {:name "Eclipse Public License"
